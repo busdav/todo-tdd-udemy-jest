@@ -30,7 +30,8 @@
     "collectCoverageFrom": [
       "**/*.{js,jsx}",
       "!**/node_modules/**",
-      "!app.js"
+      "!app.js",
+      "!server.js"
     ],
     "coveragePathIgnorePatterns": [
       "/node_modules/",
