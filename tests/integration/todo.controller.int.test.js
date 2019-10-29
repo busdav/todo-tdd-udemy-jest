@@ -5,7 +5,10 @@ const newTodo = require("../mock-data/new-todo.json");
 const endpointUrl = "/todos/";
 
 describe(endpointUrl, () => {
-  it("POST" + endpointUrl, async () => {
+  // test("GET " + endpointUrl, async () => { // "test" is same as "it" - purely semantics
+  //   const response = 
+  // })
+  it("POST " + endpointUrl, async () => {
     const response = await request(app)
       .post(endpointUrl)
       .send(newTodo);
