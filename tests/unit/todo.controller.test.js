@@ -22,15 +22,28 @@ describe("TodoController.getTodoById", () => {
   it("should call TodoModel.findById with route parameters", async () => {
     req.params.todoId = "5db804081ce1e39e6e9de20e";
     await TodoController.getTodoById(req, res, next);
-    expect(TodoModel.findById).toBeCalledWith("5db804081ce1e39e6e9de20e")
+    expect(TodoModel.findById).toHaveBeenCalledWith("5db804081ce1e39e6e9de20e")
   });
   it("should return json body and response code 200", async () => {
     TodoModel.findById.mockReturnValue(newTodo);
     await TodoController.getTodoById(req, res, next); // No need to pass route params, as we test that with previous test
     expect(res.statusCode).toBe(200);
-    expect(res._isEndCalled()).toBeTruthy(); // Make sure that the response is really sent
+    expect(res._isEndCalled()).toBeTruthy(); // To make sure that the response is really sent
     expect(res._getJSONData()).toStrictEqual(newTodo); 
-  });   
+  });
+  it("should handle errors in getTodoById", async () => {
+    const errorMessage = { message: "Error finding todo" };
+    const rejectedPromise = Promise.reject(errorMessage);
+    TodoModel.findById.mockReturnValue(rejectedPromise);
+    await TodoController.getTodoById(req, res, next);
+    expect(next).toHaveBeenCalledWith(errorMessage);
+  });
+  it("should return 404 when item doesn't exit", async () => {
+    TodoModel.findById.mockReturnValue(null);
+    await TodoController.getTodoById(req, res, next);
+    expect(res.statusCode).toBe(404);
+    expect(res._isEndCalled()).toBeTruthy();
+  })
 });
 
 describe("TodoController.getTodos", () => {
