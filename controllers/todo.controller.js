@@ -1,9 +1,13 @@
 const TodoModel = require("../model/todo.model");
 
-exports.createTodo = async (req, res, next) => {
+exports.getTodoById = async (req, res, next) => {
   try {
-    const createdModel = await TodoModel.create(req.body);
-    res.status(201).json(createdModel);
+    const todo = await TodoModel.findById(req.params.todoId);
+    if (todo) {
+      res.status(200).json(todo);
+    } else {
+      res.status(404).send();
+    }
   } catch (err) {
     next(err);
   }
@@ -18,15 +22,24 @@ exports.getTodos = async (req, res, next) => {
   }
 };
 
-exports.getTodoById = async (req, res, next) => {
+exports.createTodo = async (req, res, next) => {
   try {
-    const todo = await TodoModel.findById(req.params.todoId);
-    if (todo) {
-      res.status(200).json(todo);
-    } else {
-      res.status(404).send();
-    }
+    const createdModel = await TodoModel.create(req.body);
+    res.status(201).json(createdModel);
   } catch (err) {
     next(err);
   }
 };
+
+exports.updateTodo = async (req, res, next) => {
+  const updatedTodo = await TodoModel.findByIdAndUpdate(
+    req.params.todoId, 
+    req.body, 
+    {
+      new: true,
+      useFindAndModify: false
+    }
+  );
+  res.status(200).json(updatedTodo);
+};
+

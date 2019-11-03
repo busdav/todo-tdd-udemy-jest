@@ -7,8 +7,10 @@ const allTodos = require("../mock-data/all-todos.json");
 TodoModel.create = jest.fn(); // Mock, because we are assuming that mongoose is working properly.
 TodoModel.find = jest.fn();
 TodoModel.findById = jest.fn();
+TodoModel.findByIdAndUpdate = jest.fn();
 
 let req, res, next;
+const todoId = "5db804081ce1e39e6e9de20e";
 beforeEach(() => {
   req = httpMocks.createRequest();
   res = httpMocks.createResponse();
@@ -20,7 +22,7 @@ describe("TodoController.getTodoById", () => {
     expect(typeof TodoController.getTodoById).toBe("function");
   });
   it("should call TodoModel.findById with route parameters", async () => {
-    req.params.todoId = "5db804081ce1e39e6e9de20e";
+    req.params.todoId = todoId;
     await TodoController.getTodoById(req, res, next);
     expect(TodoModel.findById).toHaveBeenCalledWith("5db804081ce1e39e6e9de20e")
   });
@@ -99,5 +101,29 @@ beforeEach(() => {
     TodoModel.create.mockReturnValue(rejectedPromise);
     await TodoController.createTodo(req, res, next);
     expect(next).toHaveBeenCalledWith(errorMessage);
+  });
+
+  describe("TodoController.updateTodo", () => {
+    it("should have an updateTodo function", () => {
+      expect(typeof TodoController.updateTodo).toBe("function");
+    });
+    it("should update with TodoModel.findByIdAndUpdate", async () => {
+      req.params.todoId = todoId;
+      req.body = newTodo;
+      await TodoController.updateTodo(req, res, next);
+      expect(TodoModel.findByIdAndUpdate).toHaveBeenCalledWith(todoId, newTodo, {
+        new: true,
+        useFindAndModify: false
+      });
+    });
+    it("should return a response with json data and https code 200", async () => {
+      req.params.todoId = todoId;
+      req.body = newTodo; // Here again, actually, there would be no need to pass route params, as our mock will return a newTodo regardless
+      TodoModel.findByIdAndUpdate.mockReturnValue(newTodo);
+      await TodoController.updateTodo(req, res, next);
+      expect(res._isEndCalled()).toBeTruthy();
+      expect(res.statusCode).toBe(200);
+      expect(res._getJSONData()).toStrictEqual(newTodo);
+    })
   });
 });
