@@ -12,12 +12,12 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
-    "mongoose": "^5.7.5",
-    "node-mocks-http": "^1.8.0"
+    "mongoose": "^5.7.5"
   },
   "devDependencies": {
     "husky": "^3.0.9",
     "jest": "^24.9.0",
+    "node-mocks-http": "^1.8.0",
     "supertest": "^4.0.2"
   },
   "husky": {
