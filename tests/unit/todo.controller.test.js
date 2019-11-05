@@ -8,7 +8,7 @@ const allTodos = require("../mock-data/all-todos.json");
 // TodoModel.find = jest.fn();
 // TodoModel.findById = jest.fn();
 // TodoModel.findByIdAndUpdate = jest.fn(); // I can delete all of these individual function mocks and simply mock the whole model
-jest.mock("../../model/todo.model");
+jest.mock("../../model/todo.model"); // required to give the URL
 
 let req, res, next;
 const todoId = "5db804081ce1e39e6e9de20e";

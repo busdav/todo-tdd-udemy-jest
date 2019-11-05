@@ -5,6 +5,9 @@ const newTodo = require("../mock-data/new-todo.json");
 const endpointUrl = "/todos/"; // enough because supertest will RUN the app
 
 let firstTodo, newTodoId;
+const nonExistingTodoId = "5db817235d43afa0dfcfed66";
+const testData = { title: "Make integration test for PUT", done: true }; // We could also continue to use the firstTodo
+
 
 describe(endpointUrl, () => {
   test("GET " + endpointUrl, async () => { // "test" is same as "it" - purely semantics
@@ -17,15 +20,14 @@ describe(endpointUrl, () => {
     firstTodo = res.body[0];
   });
   test("GET by Id " + endpointUrl + ":todoId", async () => {
-    const res = await request(app)
-      .get(endpointUrl + firstTodo._id);
+    const res = await request(app).get(endpointUrl + firstTodo._id);
     expect(res.statusCode).toBe(200);
     expect(res.body.title).toBe(firstTodo.title);
     expect(res.body.done).toBe(firstTodo.done);
   });
   test("GET todoById doesn't exist " + endpointUrl + ":todoId", async () => {
     const res = await request(app)
-      .get(endpointUrl + "5db817235d43afa0dfcfed66");
+      .get(endpointUrl + nonExistingTodoId);
     expect(res.statusCode).toBe(404);
   });
   test("POST " + endpointUrl, async () => {
@@ -47,7 +49,6 @@ describe(endpointUrl, () => {
     });
   });
   test("PUT " + endpointUrl, async () => {
-    const testData = { title: "Make integration test for PUT", done: true }; // We could also continue to use the firstTodo
     const res = await request(app)
       .put(endpointUrl + newTodoId)
       .send(testData);
@@ -57,8 +58,20 @@ describe(endpointUrl, () => {
   });
   test("PUT updateTodo doesn't exist " + endpointUrl + ":todoId", async () => {
     const res = await request(app)
-      .put(endpointUrl + "5db817235d43afa0dfcfed66")
+      .put(endpointUrl + nonExistingTodoId)
       .send(firstTodo);
+    expect(res.statusCode).toBe(404);
+  });
+  test("DELETE " + endpointUrl, async () => {
+    const res = await request(app).delete(endpointUrl + firstTodo._id).send();
+    expect(res.statusCode).toBe(200);
+    expect(res.body.title).toBe(firstTodo.title);
+    expect(res.body.done).toBe(firstTodo.done);
+  });
+  test("DELETE todo doesn't exist " + endpointUrl + ":todoId", async () => {
+    const res = await request(app)
+      .delete(endpointUrl + nonExistingTodoId)
+      .send();
     expect(res.statusCode).toBe(404);
   });
 });
