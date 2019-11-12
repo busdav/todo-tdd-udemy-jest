@@ -3,7 +3,7 @@ const todoRoutes = require("./routes/todo.routes");
 const app = express();
 const mongodb = require("./mongodb/mongodb.connect");
 
-mongodb.connect();
+mongodb.connect(); // Alternative would be `mongodb();` in case I had NOT put `connect` in object literals in the mognodb.connect module
 
 app.use(express.json());
 app.use("/todos", todoRoutes);
